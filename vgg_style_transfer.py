@@ -1,5 +1,3 @@
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import tensorflow as tf
 import numpy as np
 import PIL.Image
@@ -15,15 +13,8 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-content_path = tf.keras.utils.get_file('YellowLabradorLooking_new5eded.jpg',
-                                       'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg')
-
-# content_path = tf.keras.utils.get_file('YellowLabradorLooking_new54443.jpg',
-#                                        'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
-
-# https://commons.wikimedia.org/wiki/File:Vassily_Kandinsky,_1913_-_Composition_7.jpg
-style_path = tf.keras.utils.get_file('mona_liza.jpg',
-                                     'https://66.media.tumblr.com/7443d5a8ab44bb157b6f582b6e103cd5/df07496f6b13932b-8f/s400x600/115969f28a6cc58fab0ccfff6fb79ca8c4bf7b3e.jpg')
+content_path = tf.keras.utils.get_file('picture_source.jpg', 'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
+style_path = tf.keras.utils.get_file('mona_liza.jpg', 'https://66.media.tumblr.com/7443d5a8ab44bb157b6f582b6e103cd5/df07496f6b13932b-8f/s400x600/115969f28a6cc58fab0ccfff6fb79ca8c4bf7b3e.jpg')
 
 
 def load_img(path_to_img):
@@ -31,13 +22,10 @@ def load_img(path_to_img):
     img = tf.io.read_file(path_to_img)
     img = tf.image.decode_image(img, channels=3)
     img = tf.image.convert_image_dtype(img, tf.float32)
-
     shape = tf.cast(tf.shape(img)[:-1], tf.float32)
     long_dim = max(shape)
     scale = max_dim / long_dim
-
     new_shape = tf.cast(shape * scale, tf.int32)
-
     img = tf.image.resize(img, new_shape)
     img = img[tf.newaxis, :]
     return img
@@ -49,12 +37,10 @@ style_image = load_img(style_path)
 
 vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
 
-# Content layer where will pull our feature maps
 content_layers = ['block5_conv2',
                   'block5_conv3',
                   'block5_conv4']
 
-# Style layer of interest
 style_layers = ['block1_conv1',
                 'block2_conv1',
                 'block3_conv1',
