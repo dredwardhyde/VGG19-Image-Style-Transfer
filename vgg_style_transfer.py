@@ -4,8 +4,8 @@ import PIL.Image
 import time
 
 
-content_path = tf.keras.utils.get_file('picture_source.jpg', 'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
-style_path = tf.keras.utils.get_file('mona_liza.jpg', 'https://66.media.tumblr.com/7443d5a8ab44bb157b6f582b6e103cd5/df07496f6b13932b-8f/s400x600/115969f28a6cc58fab0ccfff6fb79ca8c4bf7b3e.jpg')
+content_path = './results/picture_source.jpg'
+style_path = './results/mona_liza.jpg'
 
 
 def tensor_to_image(tensor):
