@@ -66,9 +66,9 @@ def gram_matrix(input_tensor):
     return result / (num_locations)
 
 
-class StyleContentModel(tf.keras.models.Model):
+class VGG(tf.keras.models.Model):
     def __init__(self, style_layers, content_layers):
-        super(StyleContentModel, self).__init__()
+        super(VGG, self).__init__()
         self.vgg = vgg_layers(style_layers + content_layers)
         self.style_layers = style_layers
         self.content_layers = content_layers
@@ -86,7 +86,7 @@ class StyleContentModel(tf.keras.models.Model):
         return {'content': content_dict, 'style': style_dict}
 
 
-extractor = StyleContentModel(style_layers, content_layers)
+extractor = VGG(style_layers, content_layers)
 style_targets = extractor(style_image)['style']
 content_targets = extractor(content_image)['content']
 image = tf.Variable(content_image)
