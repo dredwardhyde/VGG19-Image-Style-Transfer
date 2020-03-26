@@ -22,12 +22,12 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-content_path = tf.keras.utils.get_file('YellowLabradorLooking_new.jpg',
-                                       'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg')
+content_path = tf.keras.utils.get_file('YellowLabradorLooking_new54443.jpg',
+                                       'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
 
 # https://commons.wikimedia.org/wiki/File:Vassily_Kandinsky,_1913_-_Composition_7.jpg
-style_path = tf.keras.utils.get_file('kandinsky112.jpg',
-                                     'https://66.media.tumblr.com/b184e6bf54752f7029ed9e927e457e2d/f20b3eb781985289-17/s400x600/4893488b51f35db67a901c05b93af45c5f627038.jpg')
+style_path = tf.keras.utils.get_file('mona_liza.jpg',
+                                     'https://66.media.tumblr.com/7443d5a8ab44bb157b6f582b6e103cd5/df07496f6b13932b-8f/s400x600/115969f28a6cc58fab0ccfff6fb79ca8c4bf7b3e.jpg')
 
 
 def load_img(path_to_img):
@@ -189,8 +189,8 @@ def clip_0_1(image):
 
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
 
-style_weight=0.01
-content_weight=1e4
+style_weight=0.0001
+content_weight=5000
 
 total_variation_weight=30
 
@@ -220,7 +220,7 @@ def train_step(image):
   image.assign(clip_0_1(image))
 
 
-epochs = 65
+epochs = 100
 steps_per_epoch = 100
 start = time.time()
 step = 0
