@@ -4,6 +4,10 @@ import PIL.Image
 import time
 
 
+content_path = tf.keras.utils.get_file('picture_source.jpg', 'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
+style_path = tf.keras.utils.get_file('mona_liza.jpg', 'https://66.media.tumblr.com/7443d5a8ab44bb157b6f582b6e103cd5/df07496f6b13932b-8f/s400x600/115969f28a6cc58fab0ccfff6fb79ca8c4bf7b3e.jpg')
+
+
 def tensor_to_image(tensor):
     tensor = tensor * 255
     tensor = np.array(tensor, dtype=np.uint8)
@@ -11,10 +15,6 @@ def tensor_to_image(tensor):
         assert tensor.shape[0] == 1
         tensor = tensor[0]
     return PIL.Image.fromarray(tensor)
-
-
-content_path = tf.keras.utils.get_file('picture_source.jpg', 'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
-style_path = tf.keras.utils.get_file('mona_liza.jpg', 'https://66.media.tumblr.com/7443d5a8ab44bb157b6f582b6e103cd5/df07496f6b13932b-8f/s400x600/115969f28a6cc58fab0ccfff6fb79ca8c4bf7b3e.jpg')
 
 
 def load_img(path_to_img):
@@ -97,22 +97,17 @@ def clip_0_1(image):
 
 
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-3)
-
 style_weight=0.001
 content_weight=15000
-
 total_variation_weight=50
 
 
 def style_content_loss(outputs):
     style_outputs = outputs['style']
     content_outputs = outputs['content']
-    style_loss = tf.add_n([tf.reduce_mean((style_outputs[name]-style_targets[name])**2)
-                           for name in style_outputs.keys()])
+    style_loss = tf.add_n([tf.reduce_mean((style_outputs[name]-style_targets[name])**2) for name in style_outputs.keys()])
     style_loss *= style_weight / num_style_layers
-
-    content_loss = tf.add_n([tf.reduce_mean((content_outputs[name]-content_targets[name])**2)
-                             for name in content_outputs.keys()])
+    content_loss = tf.add_n([tf.reduce_mean((content_outputs[name]-content_targets[name])**2) for name in content_outputs.keys()])
     content_loss *= content_weight / num_content_layers
     loss = style_loss + content_loss
     return loss
@@ -123,7 +118,6 @@ def train_step(image):
     outputs = extractor(image)
     loss = style_content_loss(outputs)
     loss += total_variation_weight*tf.image.total_variation(image)
-
   grad = tape.gradient(loss, image)
   opt.apply_gradients([(grad, image)])
   image.assign(clip_0_1(image))
