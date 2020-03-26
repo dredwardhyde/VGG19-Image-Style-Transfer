@@ -22,8 +22,11 @@ def tensor_to_image(tensor):
     return PIL.Image.fromarray(tensor)
 
 
-content_path = tf.keras.utils.get_file('YellowLabradorLooking_new54443.jpg',
-                                       'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
+content_path = tf.keras.utils.get_file('YellowLabradorLooking_new5eded.jpg',
+                                       'https://storage.googleapis.com/download.tensorflow.org/example_images/YellowLabradorLooking_new.jpg')
+
+# content_path = tf.keras.utils.get_file('YellowLabradorLooking_new54443.jpg',
+#                                        'https://66.media.tumblr.com/188948e0b2fe82b21c9966c51559ac3a/d67ebb71249bfae1-26/s400x600/8461a386236e7401747daa0198f443def5ae17c0.jpg')
 
 # https://commons.wikimedia.org/wiki/File:Vassily_Kandinsky,_1913_-_Composition_7.jpg
 style_path = tf.keras.utils.get_file('mona_liza.jpg',
@@ -189,10 +192,15 @@ def clip_0_1(image):
 
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
 
-style_weight=0.0001
-content_weight=5000
+# style_weight=0.0001
+# content_weight=5000
+#
+# total_variation_weight=30
 
-total_variation_weight=30
+style_weight=0.01
+content_weight=15000
+
+total_variation_weight=50
 
 
 def style_content_loss(outputs):
