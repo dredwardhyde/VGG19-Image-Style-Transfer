@@ -82,9 +82,9 @@ style_targets = extractor(style_image)['style']
 content_targets = extractor(content_image)['content']
 image = tf.Variable(content_image)
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-3)
-style_weight = 0.001
-content_weight = 15000
-total_variation_weight = 50
+style_weight = 0.01
+content_weight = 10000
+total_variation_weight = 15
 
 
 def train_step(image):
