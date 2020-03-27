@@ -3,8 +3,8 @@ import numpy as np
 import PIL.Image
 import time
 
-content_path = './results/picture_source.jpg'
-style_path = './results/mona_liza.jpg'
+content_path = './results/man_source.jpg'
+style_path = './results/coffee_source.jpg'
 
 
 def tensor_to_image(tensor):
@@ -82,9 +82,9 @@ style_targets = extractor(style_image)['style']
 content_targets = extractor(content_image)['content']
 image = tf.Variable(content_image)
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-3)
-style_weight = 0.01
+style_weight = 0.5
 content_weight = 10000
-total_variation_weight = 15
+total_variation_weight = 10
 
 
 def train_step(image):
