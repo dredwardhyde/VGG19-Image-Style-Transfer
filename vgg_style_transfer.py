@@ -48,10 +48,20 @@ num_style_layers = len(style_layers)
 
 
 def gram_matrix(input_tensor):
-    result = tf.linalg.einsum('bijc,bijd->bcd', input_tensor, input_tensor)
     input_shape = tf.shape(input_tensor)
+    # Get the number of feature channels for the input tensor,
+    # which is assumed to be from a convolutional layer with 4-dim.
+    num_channels = int(input_shape[3])
+    # Reshape the tensor so it is a 2-dim matrix. This essentially
+    # flattens the contents of each feature-channel.
+    matrix = tf.reshape(input_tensor, shape=[-1, num_channels])
+    # Calculate the Gram-matrix as the matrix-product of
+    # the 2-dim matrix with itself. This calculates the
+    # dot-products of all combinations of the feature-channels.
+    gram = tf.matmul(tf.transpose(matrix), matrix)
+    # Average that outer product over all locations
     num_locations = tf.cast(input_shape[1] * input_shape[2], tf.float32)
-    return result / num_locations
+    return gram / num_locations
 
 
 class VGG(tf.keras.models.Model):
