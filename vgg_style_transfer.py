@@ -7,25 +7,40 @@ content_path = './results/man_source.jpg'
 style_path = './results/spaghetti_source.jpg'
 
 
+# Converts 4 dimensional 0-1 float32 RGB matrix to Pillow image
 def tensor_to_image(tensor):
     tensor = tensor * 255
+    # Convert float32 to uint8 matrix
     tensor = np.array(tensor, dtype=np.uint8)
-    if np.ndim(tensor) > 3:
-        assert tensor.shape[0] == 1
-        tensor = tensor[0]
+    # Take first image matrix
+    tensor = tensor[0]
+    # Convert it to Pillow image
     return PIL.Image.fromarray(tensor)
 
 
+# Loads image file, scales it to max 512px at the longest dimension
+# Returns scaled image as 3-dimensional tensor - number of channels X width X height
 def load_img(path_to_img):
+    # Maximum length in pixels along the longest dimension
     max_dim = 512
+    # Read raw file as byte array
     img = tf.io.read_file(path_to_img)
+    # Convert byte array to 3-dimensional matrix of RGB pixels from 0 to 255
     img = tf.image.decode_image(img, channels=3)
+    # Convert 3-dimensional matrix of RGB pixels from 0 to 255 to 0 to 1
+    # because it is what our neural network expects
     img = tf.image.convert_image_dtype(img, tf.float32)
+    # Determine shape of our image to be able to rescale it
     shape = tf.cast(tf.shape(img)[:-1], tf.float32)
+    # Get length along the longest dimension
     long_dim = max(shape)
+    # Determine scale along that dimension
     scale = max_dim / long_dim
+    # Determine new scaled shape of our image
     new_shape = tf.cast(shape * scale, tf.int32)
+    # Resize image to new scaled size
     img = tf.image.resize(img, new_shape)
+    # Convert to 4-dimensional matrix (first dimensional is 1) - number of images in batch
     img = img[tf.newaxis, :]
     return img
 
