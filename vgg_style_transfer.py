@@ -68,7 +68,6 @@ vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
 vgg.trainable = False
 outputs = [vgg.get_layer(name).output for name in (style_layers + content_layers)]
 model = tf.keras.Model([vgg.input], outputs)
-num_style_layers = len(style_layers)
 model.trainable = False
 
 
