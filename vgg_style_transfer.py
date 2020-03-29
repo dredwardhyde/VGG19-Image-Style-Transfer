@@ -4,7 +4,7 @@ import PIL.Image
 import time
 
 content_path = './results/man_source.jpg'
-style_path = './results/coffee_source.jpg'
+style_path = './results/spaghetti_source.jpg'
 
 
 def tensor_to_image(tensor):
@@ -64,32 +64,27 @@ def gram_matrix(input_tensor):
     return gram / num_locations
 
 
-class VGG(tf.keras.models.Model):
-    def __init__(self, style_layers, content_layers):
-        super(VGG, self).__init__()
-        vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
-        vgg.trainable = False
-        outputs = [vgg.get_layer(name).output for name in (style_layers + content_layers)]
-        self.vgg = tf.keras.Model([vgg.input], outputs)
-        self.style_layers = style_layers
-        self.content_layers = content_layers
-        self.num_style_layers = len(style_layers)
-        self.vgg.trainable = False
-
-    def call(self, inputs):
-        inputs = inputs * 255.0
-        preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
-        outputs = self.vgg(preprocessed_input)
-        style_outputs, content_outputs = (outputs[:self.num_style_layers], outputs[self.num_style_layers:])
-        style_outputs = [gram_matrix(style_output) for style_output in style_outputs]
-        content_dict = {content_name: value for content_name, value in zip(self.content_layers, content_outputs)}
-        style_dict = {style_name: value for style_name, value in zip(self.style_layers, style_outputs)}
-        return {'content': content_dict, 'style': style_dict}
+vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
+vgg.trainable = False
+outputs = [vgg.get_layer(name).output for name in (style_layers + content_layers)]
+model = tf.keras.Model([vgg.input], outputs)
+num_style_layers = len(style_layers)
+model.trainable = False
 
 
-extractor = VGG(style_layers, content_layers)
-style_targets = extractor(style_image)['style']
-content_targets = extractor(content_image)['content']
+def style_transfer(inputs):
+    inputs = inputs * 255.0
+    preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
+    outputs = model(preprocessed_input)
+    style_outputs, content_outputs = (outputs[:num_style_layers], outputs[num_style_layers:])
+    style_outputs = [gram_matrix(style_output) for style_output in style_outputs]
+    content_dict = {content_name: value for content_name, value in zip(content_layers, content_outputs)}
+    style_dict = {style_name: value for style_name, value in zip(style_layers, style_outputs)}
+    return {'content': content_dict, 'style': style_dict}
+
+
+style_targets = style_transfer(style_image)['style']
+content_targets = style_transfer(content_image)['content']
 image = tf.Variable(content_image)
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-3)
 style_weight = 0.5
@@ -99,7 +94,7 @@ total_variation_weight = 10
 
 def train_step(image):
     with tf.GradientTape() as tape:
-        outputs = extractor(image)
+        outputs = style_transfer(image)
         style_outputs = outputs['style']
         content_outputs = outputs['content']
         style_loss = tf.add_n(
