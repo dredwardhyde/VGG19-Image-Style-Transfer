@@ -126,20 +126,31 @@ style_weight = 0.5
 content_weight = 10000
 total_variation_weight = 10
 
-
+# Ome step of processing image and applying gradients
 def train_step():
+    # Gradient tape keeps track of all changes of our image variable
     with tf.GradientTape() as tape:
+        # style_transfer function only applies TF functions and returns TF tensor
         outputs = style_transfer(image)
+        # style_outputs and content_outputs are dictionaries of EagerTensor
         style_outputs = outputs['style']
         content_outputs = outputs['content']
+        # Calculate MSE across each style layer and sum them
         style_loss = tf.add_n(
-            [tf.reduce_mean((style_outputs[name] - style_targets[name]) ** 2) for name in style_outputs.keys()])
+            [tf.reduce_mean(tf.math.squared_difference(style_outputs[name], style_targets[name])) for name in style_outputs.keys()])
+        # Weight that sum and average it by number of style layers
         style_loss *= style_weight / num_style_layers
+        # Calculate MSE across each content layer and sum them
         content_loss = tf.add_n(
-            [tf.reduce_mean((content_outputs[name] - content_targets[name]) ** 2) for name in content_outputs.keys()])
+            [tf.reduce_mean(tf.math.squared_difference(content_outputs[name], content_targets[name])) for name in content_outputs.keys()])
+        # Weight that sum and average it by number of content layers
         content_loss *= content_weight / num_content_layers
+        # Calculate total loss
         loss = style_loss + content_loss
+        # Reduce high-frequency noise on the image
         loss += total_variation_weight * tf.image.total_variation(image)
+    # Calculate gradients of our loss function w.r.t to our image
+    # So it is basically first derivative of loss function
     grad = tape.gradient(loss, image)
     opt.apply_gradients([(grad, image)])
     image.assign(tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0))
