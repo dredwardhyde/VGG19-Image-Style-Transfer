@@ -129,7 +129,7 @@ total_variation_weight = 10
 # Ome step of processing image and applying gradients
 def train_step():
     # Gradient tape keeps track of all changes of our image variable
-    with tf.GradientTape() as tape:
+    with tf.GradientTape() as t:
         # style_transfer function only applies TF functions and returns TF tensor
         outputs = style_transfer(image)
         # style_outputs and content_outputs are dictionaries of EagerTensor
@@ -151,8 +151,10 @@ def train_step():
         loss += total_variation_weight * tf.image.total_variation(image)
     # Calculate gradients of our loss function w.r.t to our image
     # So it is basically first derivative of loss function
-    grad = tape.gradient(loss, image)
+    grad = t.gradient(loss, image)
+    # Apply gradients to our image
     opt.apply_gradients([(grad, image)])
+    # Keep our updated image values between 0 and 1 since our image is float32
     image.assign(tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0))
 
 
