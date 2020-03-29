@@ -48,10 +48,16 @@ def load_img(path_to_img):
 content_image = load_img(content_path)
 style_image = load_img(style_path)
 
+# Those layers will be used to determine general
+# details in our content image - contours, figures, etc
 content_layers = ['block5_conv2',
                   'block5_conv3',
                   'block5_conv4']
 
+# Those layers will be used to determine the overall "style" of our style image
+# Output of each convolutional layer will be passed on to compute gram matrix which tells us how evenly
+# each feature spreads across style image - if it was captured by other filters on that layer
+# If that feature spreads evenly across style image - it will be transferred to our content image
 style_layers = ['block1_conv1',
                 'block2_conv1',
                 'block3_conv1',
@@ -79,25 +85,40 @@ def gram_matrix(input_tensor):
     return gram / num_locations
 
 
+# Load pretrained VGG19 model without fully-connected layer at the top of the network
 vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
+# Make network not trainable
 vgg.trainable = False
+# All style and content layers will be output of our model
 outputs = [vgg.get_layer(name).output for name in (style_layers + content_layers)]
+# Construct model
 model = tf.keras.Model([vgg.input], outputs)
+# Make it non trainable
 model.trainable = False
 
 
+# Processing one image (3-d tensor in 0-1 float32 RGB) by our model
 def style_transfer(inputs):
+    # Converts RGB 0-1 float32 tensor to 0-255
     inputs = inputs * 255.0
+    # Converts our RGB 0 to 255 tensor to BGR -1 to 1 tensor suitable for ImageNet network
     preprocessed_input = tf.keras.applications.vgg19.preprocess_input(inputs)
+    # Process preprocessed image by network
     outputs = model(preprocessed_input)
+    # Take output of each layer
     style_outputs, content_outputs = (outputs[:num_style_layers], outputs[num_style_layers:])
+    # For each output from style layer - compute gram matrix
     style_outputs = [gram_matrix(style_output) for style_output in style_outputs]
+    # Map each output tensor to corresponding content layer
     content_dict = {content_name: value for content_name, value in zip(content_layers, content_outputs)}
+    # Map each output tensor to corresponding style layer
     style_dict = {style_name: value for style_name, value in zip(style_layers, style_outputs)}
     return {'content': content_dict, 'style': style_dict}
 
 
+# Process style image and get output of style layers from our model
 style_targets = style_transfer(style_image)['style']
+# Process content image and get output of content layers from our model
 content_targets = style_transfer(content_image)['content']
 image = tf.Variable(content_image)
 opt = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-3)
