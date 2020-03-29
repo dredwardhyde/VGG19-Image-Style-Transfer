@@ -1,6 +1,6 @@
 # VGG19-Image-Style-Transfer
 
-# Results:
+## Results:
 
 **Content image**  
 <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/man_source.jpg" width="200"/>  
