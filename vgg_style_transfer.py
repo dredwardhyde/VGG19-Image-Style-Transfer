@@ -12,10 +12,8 @@ def tensor_to_image(tensor):
     tensor = tensor * 255
     # Convert float32 to uint8 matrix
     tensor = np.array(tensor, dtype=np.uint8)
-    # Take first image matrix
-    tensor = tensor[0]
-    # Convert it to Pillow image
-    return PIL.Image.fromarray(tensor)
+    # Take first image matrix and convert it to Pillow image
+    return PIL.Image.fromarray(tensor[0])
 
 
 # Loads image file, scales it to max 512px at the longest dimension
@@ -136,13 +134,11 @@ def train_step():
         style_outputs = outputs['style']
         content_outputs = outputs['content']
         # Calculate MSE across each style layer and sum them
-        style_loss = tf.add_n(
-            [tf.reduce_mean(tf.math.squared_difference(style_outputs[name], style_targets[name])) for name in style_outputs.keys()])
+        style_loss = tf.add_n([tf.reduce_mean(tf.math.squared_difference(style_outputs[name], style_targets[name])) for name in style_outputs.keys()])
         # Weight that sum and average it by number of style layers
         style_loss *= style_weight / num_style_layers
         # Calculate MSE across each content layer and sum them
-        content_loss = tf.add_n(
-            [tf.reduce_mean(tf.math.squared_difference(content_outputs[name], content_targets[name])) for name in content_outputs.keys()])
+        content_loss = tf.add_n([tf.reduce_mean(tf.math.squared_difference(content_outputs[name], content_targets[name])) for name in content_outputs.keys()])
         # Weight that sum and average it by number of content layers
         content_loss *= content_weight / num_content_layers
         # Calculate total loss
