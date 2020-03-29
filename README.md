@@ -1,4 +1,4 @@
-# VGG19-Image-Style-Transfer
+# Image Style Transfer Using VGG19 Neural Network
 
 ## Results:
 
