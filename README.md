@@ -47,3 +47,42 @@
     </td>
   </tr>
 </table>
+
+## More...  
+
+<table>
+  <th>Content image</th><th>Style image</th><th>Result</th>
+  <tr>
+    <td align="center">
+       <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/sky_source.jpg" width="350"/>
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/starry_night.jpg" width="350"/>
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/sky_result.png" width="350"/>
+    </td>
+   </tr>
+    <tr>
+    <td align="center">
+       <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/picture_source.jpg" width="350"/>
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/mona_liza.jpg" width="300"/>
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/picture_result.png" width="350"/>
+    </td>
+   </tr>
+  <tr>
+    <td align="center">
+       <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/dog_source.jpg" width="350"/>
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/mona_liza.jpg" width="300"/>
+    </td>
+    <td>
+      <img src="https://raw.githubusercontent.com/dredwardhyde/VGG19-Image-Style-Transfer/master/results/dog_result.png" width="350"/>
+    </td>
+   </tr>
+</table>
