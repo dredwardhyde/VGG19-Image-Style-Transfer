@@ -127,7 +127,7 @@ content_weight = 10000
 total_variation_weight = 10
 
 
-def train_step(image):
+def train_step():
     with tf.GradientTape() as tape:
         outputs = style_transfer(image)
         style_outputs = outputs['style']
@@ -152,7 +152,7 @@ step = 0
 for n in range(epochs):
     for m in range(steps_per_epoch):
         step += 1
-        train_step(image)
+        train_step()
         print(".", end='')
     tensor_to_image(image).save('result_' + str(n) + '.png')
     print("Train step: {}".format(step))
