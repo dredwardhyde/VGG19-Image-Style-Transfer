@@ -124,6 +124,7 @@ style_weight = 0.5
 content_weight = 10000
 total_variation_weight = 10
 
+
 # Ome step of processing image and applying gradients
 def train_step():
     # Gradient tape keeps track of all changes of our image variable
@@ -134,11 +135,15 @@ def train_step():
         style_outputs = outputs['style']
         content_outputs = outputs['content']
         # Calculate MSE across each style layer and sum them
-        style_loss = tf.add_n([tf.reduce_mean(tf.math.squared_difference(style_outputs[name], style_targets[name])) for name in style_outputs.keys()])
+        style_loss = tf.add_n(
+            [tf.reduce_mean(tf.math.squared_difference(style_outputs[name], style_targets[name])) for name in
+             style_outputs.keys()])
         # Weight that sum and average it by number of style layers
         style_loss *= style_weight / num_style_layers
         # Calculate MSE across each content layer and sum them
-        content_loss = tf.add_n([tf.reduce_mean(tf.math.squared_difference(content_outputs[name], content_targets[name])) for name in content_outputs.keys()])
+        content_loss = tf.add_n(
+            [tf.reduce_mean(tf.math.squared_difference(content_outputs[name], content_targets[name])) for name in
+             content_outputs.keys()])
         # Weight that sum and average it by number of content layers
         content_loss *= content_weight / num_content_layers
         # Calculate total loss
